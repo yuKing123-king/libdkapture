@@ -339,7 +339,7 @@ bool NetFilter::load_rules(const char *rule_file)
 	}
 
 	char *line = NULL;
-	size_t len = 0;
+	size_t len;
 	ssize_t read;
 	unsigned int first_key = key_cnt;
 
@@ -350,24 +350,20 @@ bool NetFilter::load_rules(const char *rule_file)
 			}
 			key_cnt = first_key;
 	};
-
-
 	while ((read = getline(&line, &len, fp)) != -1)
 	{
 		Rule rule;
-		char *rule_line = line;
 
-		while (*rule_line == ' ' || *rule_line == '\t')
+		while (*line == ' ' || *line == '\t')
 		{
-			rule_line++;
+			line++;
 		}
-
-		if (*rule_line == '#' || *rule_line == '\n' || *rule_line == '\0')
+		if (*line == '#' || *line == '\n' || *line == '\0')
 		{
 			continue;
 		}
 
-		if (!parse_rule(rule_line, rule))
+		if (!parse_rule(line, rule))
 		{
 			pr_error("syntax error in config file\n");
 			rollback_loaded_rules();
