@@ -164,7 +164,16 @@ void parse_args(int argc, char **argv)
 			rule.pid = atoi(optarg);
 			break;
 		case 'r': // Remote IP
-			rule.remote_ip = ntohl(inet_addr(optarg));
+			{
+				struct in_addr in;
+				if (inet_pton(AF_INET, optarg, &in) != 1)
+				{
+					fprintf(stderr, "Invalid remote ip: %s\n", optarg);
+					Usage(argv[0]);
+					exit(-1);
+				}
+				rule.remote_ip = ntohl(in.s_addr);
+			}
 			break;
 		case 'P': // Remote port
 			rule.remote_port = atoi(optarg);
